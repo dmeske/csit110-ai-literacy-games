@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="Explore interactive AI literacy games created for Palomar College students.">
+  <title>AI Game Lab — Palomar College</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --red: #e9171f;
+      --red-dark: #bd1119;
+      --ink: #17181b;
+      --muted: #65676d;
+      --paper: #f4f4f2;
+      --white: #fff;
+      --silver: #b4babc;
+      --gold: #fed184;
+      --line: #dedfdf;
+      --mono: 'DM Mono', monospace;
+      --sans: 'Manrope', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .topline { height: 5px; background: var(--red); }
+    .shell { max-width: 1220px; width: min(100% - 48px, 1220px); margin: 0 auto; }
+    header { height: 78px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,.13); color:#fff; }
+    .masthead { background:var(--ink); }
+    .brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .brand-mark { width:36px; height:36px; display:grid; place-items:center; color:#fff; background:var(--red); font-weight:800; font-size:14px; letter-spacing:-.08em; transform:rotate(-5deg); }
+    .brand-copy { display:grid; gap:2px; }
+    .brand-name { font-size:13px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    .brand-unit { color:#b9babd; font:10px var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .header-meta { display:flex; align-items:center; gap:9px; color:#c6c7c9; font:11px var(--mono); text-transform:uppercase; letter-spacing:.1em; }
+    .status-dot { width:7px; height:7px; border-radius:50%; background:#63d19a; box-shadow:0 0 12px #63d19a; }
+    .hero { position:relative; overflow:hidden; background:var(--ink); color:#fff; }
+    .hero-inner { position:relative; z-index:1; min-height:420px; display:flex; align-items:center; padding:76px 0 84px; }
+    .hero-copy { max-width:680px; }
+    .eyebrow { display:flex; align-items:center; gap:11px; margin:0 0 22px; color:var(--gold); font:11px var(--mono); text-transform:uppercase; letter-spacing:.16em; }
+    .eyebrow::before { content:''; width:26px; height:1px; background:var(--red); }
+    h1 { margin:0; max-width:700px; font-size:clamp(48px,7vw,88px); line-height:.98; letter-spacing:-.075em; font-weight:800; }
+    h1 span { color:var(--red); }
+    .hero-intro { max-width:570px; margin:24px 0 0; color:#c3c4c6; font-size:16px; line-height:1.75; }
+    .hero-actions { display:flex; gap:20px; align-items:center; margin-top:32px; }
+    .primary-link { display:inline-flex; align-items:center; gap:12px; padding:13px 18px; color:#fff; background:var(--red); text-decoration:none; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; transition:transform .18s,background .18s; }
+    .primary-link:hover { background:var(--red-dark); transform:translateY(-2px); }
+    .primary-link span { font-size:17px; }
+    .hero-note { color:#a3a5a8; font:11px var(--mono); }
+    .hero-grid { position:absolute; inset:0 0 0 48%; opacity:.38; background-image:linear-gradient(rgba(255,255,255,.085) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.085) 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(90deg,transparent,#000 38%); }
+    .orb { position:absolute; width:370px; aspect-ratio:1; top:20px; right:8%; border:1px solid rgba(254,209,132,.3); border-radius:50%; box-shadow:inset 0 0 60px rgba(233,23,31,.08),0 0 90px rgba(233,23,31,.08); }
+    .orb::before,.orb::after { content:''; position:absolute; border:1px solid rgba(180,186,188,.25); border-radius:50%; inset:38px; }
+    .orb::after { inset:85px; border-color:rgba(233,23,31,.65); }
+    .orbit { position:absolute; top:78px; right:calc(8% + 10px); width:350px; height:210px; border:1px solid rgba(254,209,132,.8); border-radius:50%; transform:rotate(-32deg); }
+    .orbit-point { position:absolute; top:94px; right:calc(8% + 92px); width:12px; height:12px; border-radius:50%; background:var(--gold); box-shadow:0 0 22px var(--gold); }
+    .hero-index { position:absolute; right:0; bottom:34px; color:rgba(255,255,255,.45); font:10px var(--mono); letter-spacing:.12em; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); margin-top:-1px; background:#fff; border:1px solid var(--line); }
+    .stat { display:flex; align-items:center; gap:13px; min-height:84px; padding:18px 24px; border-right:1px solid var(--line); }
+    .stat:last-child { border-right:0; }
+    .stat-num { color:var(--red); font-size:23px; font-weight:800; letter-spacing:-.06em; }
+    .stat-label { color:var(--muted); font:10px var(--mono); text-transform:uppercase; letter-spacing:.08em; line-height:1.5; }
+    main { padding:75px 0 92px; }
+    .section-heading { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:28px; }
+    .section-kicker { color:var(--red); font:10px var(--mono); text-transform:uppercase; letter-spacing:.14em; }
+    h2 { margin:9px 0 0; font-size:clamp(27px,4vw,39px); letter-spacing:-.06em; line-height:1.1; }
+    .section-description { max-width:385px; margin:0 0 2px; color:var(--muted); font-size:13px; line-height:1.65; }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:20px; }
+    .filters { display:flex; flex-wrap:wrap; gap:7px; }
+    .filter-btn { border:1px solid transparent; background:transparent; color:#67696c; padding:8px 12px; font:10px var(--mono); text-transform:uppercase; letter-spacing:.06em; cursor:pointer; transition:.18s; }
+    .filter-btn:hover { border-color:var(--line); color:var(--ink); }
+    .filter-btn[aria-pressed="true"] { background:var(--ink); color:#fff; }
+    .search { display:flex; align-items:center; gap:8px; width:min(240px,40vw); border-bottom:1px solid #b9bbbc; padding:7px 2px; }
+    .search svg { flex:none; color:#777; }
+    .search input { width:100%; min-width:0; border:0; outline:0; background:transparent; color:var(--ink); font:11px var(--mono); }
+    .search input::placeholder { color:#888; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .game-card { display:flex; min-height:286px; flex-direction:column; position:relative; padding:21px; overflow:hidden; border:1px solid #dfe0df; background:#fff; text-decoration:none; transition:transform .2s,box-shadow .2s,border-color .2s; }
+    .game-card:hover { transform:translateY(-4px); border-color:#c5c6c6; box-shadow:0 16px 34px rgba(20,21,24,.09); }
+    .game-card::after { content:''; position:absolute; right:-42px; top:-54px; width:140px; height:140px; border:1px solid #ececec; border-radius:50%; box-shadow:0 0 0 18px #fafafa,0 0 0 19px #ededed; pointer-events:none; }
+    .card-top { display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; }
+    .card-icon { display:grid; width:42px; height:42px; place-items:center; background:#f4f4f2; color:var(--red); }
+    .card-icon svg { width:21px; height:21px; }
+    .module { color:#7b7d80; font:9px var(--mono); text-transform:uppercase; letter-spacing:.1em; }
+    .game-card h3 { margin:25px 0 9px; max-width:240px; font-size:19px; line-height:1.2; letter-spacing:-.045em; }
+    .game-card p { margin:0; max-width:340px; color:var(--muted); font-size:11px; line-height:1.65; }
+    .card-bottom { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:auto; padding-top:21px; }
+    .tag { padding:6px 8px; background:#f2f2f0; color:#55575a; font:9px var(--mono); text-transform:uppercase; letter-spacing:.03em; }
+    .launch { display:flex; align-items:center; gap:7px; color:var(--red); font:10px var(--mono); text-transform:uppercase; letter-spacing:.08em; }
+    .launch-arrow { display:grid; width:24px; height:24px; place-items:center; border:1px solid #f1c2c3; border-radius:50%; transition:background .18s,color .18s; }
+    .game-card:hover .launch-arrow { background:var(--red); color:#fff; }
+    .empty { display:none; grid-column:1/-1; padding:34px; text-align:center; color:var(--muted); border:1px dashed var(--silver); font-size:13px; }
+    .note { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-top:30px; padding:19px 22px; background:#ececea; color:#595b5e; font-size:11px; line-height:1.6; }
+    .note strong { color:var(--ink); }
+    .note-mark { flex:none; color:var(--red); font:11px var(--mono); text-transform:uppercase; letter-spacing:.12em; }
+    footer { background:var(--ink); color:#c5c6c8; }
+    .footer-inner { min-height:92px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+    .footer-title { color:#fff; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .footer-copy { margin-top:5px; color:#9b9da0; font:9px var(--mono); }
+    .footer-link { color:var(--gold); font:10px var(--mono); text-decoration:none; text-transform:uppercase; letter-spacing:.08em; }
+    .footer-link:hover { text-decoration:underline; }
+    @media (max-width:900px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .orb { right:-70px; opacity:.65; } .orbit,.orbit-point { display:none; } .hero-grid { left:35%; } }
+    @media (max-width:620px) {
+      .shell { width:min(100% - 32px,1220px); }
+      header { height:68px; }
+      .header-meta { font-size:9px; }
+      .hero-inner { min-height:390px; padding:66px 0 74px; }
+      .hero-intro { font-size:14px; }
+      .orb { width:250px; top:120px; right:-110px; }
+      .stats { grid-template-columns:1fr; }
+      .stat { min-height:62px; padding:12px 18px; border-right:0; border-bottom:1px solid var(--line); }
+      .stat:last-child { border-bottom:0; }
+      main { padding:55px 0 65px; }
+      .section-heading { display:block; }
+      .section-description { margin-top:14px; }
+      .toolbar { align-items:flex-start; flex-direction:column; }
+      .search { width:100%; }
+      .grid { grid-template-columns:1fr; }
+      .game-card { min-height:250px; }
+      .note { align-items:flex-start; flex-direction:column; }
+      .footer-inner { align-items:flex-start; flex-direction:column; justify-content:center; padding:22px 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="topline"></div>
+  <div class="masthead">
+    <div class="shell">
+      <header>
+        <a class="brand" href="#top" aria-label="AI Game Lab home">
+          <span class="brand-mark">AI</span>
+          <span class="brand-copy"><span class="brand-name">AI Game Lab</span><span class="brand-unit">Palomar College · CSIT 110</span></span>
+        </a>
+        <div class="header-meta"><span class="status-dot"></span> Interactive learning collection</div>
+      </header>
+    </div>
+  </div>
+  <section class="hero" id="top">
+    <div class="hero-grid"></div><div class="orb"></div><div class="orbit"></div><div class="orbit-point"></div>
+    <div class="shell hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">A hands-on AI literacy collection</p>
+        <h1>Think. Play.<br><span>Question AI.</span></h1>
+        <p class="hero-intro">Step into a collection of interactive games exploring how AI works, where it gets things wrong, and how our own thinking shapes the technology we use.</p>
+        <div class="hero-actions"><a class="primary-link" href="#games">Explore the games <span aria-hidden="true">↘</span></a><span class="hero-note">MADE FOR CURIOUS MINDS</span></div>
+      </div>
+      <div class="hero-index">PALOMAR COLLEGE / AI LITERACY / 2026</div>
+    </div>
+  </section>
+  <div class="shell">
+    <div class="stats" aria-label="Collection summary">
+      <div class="stat"><span class="stat-num" id="game-count">08</span><span class="stat-label">Interactive<br>experiences</span></div>
+      <div class="stat"><span class="stat-num">01—09</span><span class="stat-label">Learning modules<br>and beyond</span></div>
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Ways to question<br>what AI tells us</span></div>
+    </div>
+  </div>
+  <main class="shell" id="games">
+    <div class="section-heading">
+      <div><div class="section-kicker">The collection / 01—08</div><h2>Choose your next challenge.</h2></div>
+      <p class="section-description">Short, interactive experiences for building a sharper, more thoughtful relationship with AI.</p>
+    </div>
+    <div class="toolbar">
+      <div class="filters" role="group" aria-label="Filter games by topic">
+        <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">All games</button>
+        <button class="filter-btn" type="button" data-filter="foundations" aria-pressed="false">AI foundations</button>
+        <button class="filter-btn" type="button" data-filter="prompting" aria-pressed="false">Prompting</button>
+        <button class="filter-btn" type="button" data-filter="critical" aria-pressed="false">Critical thinking</button>
+      </div>
+      <label class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Search the collection" aria-label="Search games"></label>
+    </div>
+    <div class="grid" id="game-grid">
+      <a class="game-card" data-category="foundations" data-search="myth reality ai basics module 1" href="https://dmeske.github.io/csit110-ai-literacy-games/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21 19H3L12 3Z" stroke="currentColor" stroke-width="1.7"/><path d="M12 9v4m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="module">Module 01</span></div>
+        <h3>AI Myth vs Reality</h3><p>Separate popular AI misconceptions from the facts behind today's systems.</p>
+        <div class="card-bottom"><span class="tag">AI foundations</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="prompting" data-search="prompt design arcade zero shot few shot chain thought module 4" href="https://dmeske.github.io/csit110-prompt-arcade/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="module">Module 04</span></div>
+        <h3>Prompt Design Arcade</h3><p>Match the terms, spot prompting techniques, and turn vague asks into specific ones.</p>
+        <div class="card-bottom"><span class="tag">Prompting</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="critical" data-search="text forensics human ai email writing module 5" href="https://dmeske.github.io/csit110-text-forensics-game/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4z" stroke="currentColor" stroke-width="1.7"/><path d="M7 9h10M7 12h6m-6 3h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="17.5" cy="15" r="3.5" fill="#fff" stroke="currentColor" stroke-width="1.5"/></svg></span><span class="module">Module 05</span></div>
+        <h3>Text Forensics</h3><p>Inspect writing clues and decide whether a message came from a person or AI.</p>
+        <div class="card-bottom"><span class="tag">Critical thinking</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="critical" data-search="media forensics deepfake image video verification module 6" href="https://dmeske.github.io/Media-Forensics-Game/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><circle cx="8.5" cy="9" r="1.5" stroke="currentColor" stroke-width="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><span class="module">Module 06</span></div>
+        <h3>Media Forensics</h3><p>Sharpen your eye for synthetic and manipulated media with an investigator's mindset.</p>
+        <div class="card-bottom"><span class="tag">Media literacy</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="foundations" data-search="hallucinations fact check verification reliability module 7" href="https://dmeske.github.io/CSIT110-ai-hallucinations-game/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a8 8 0 0 0-4.7 14.5V21h9.4v-3.5A8 8 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.7"/><path d="M9 21h6m-4-13v4m2-4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="module">AI Reliability</span></div>
+        <h3>Hallucination Hunt</h3><p>Put AI-generated claims under the microscope and practice checking what sounds convincing.</p>
+        <div class="card-bottom"><span class="tag">AI foundations</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="critical" data-search="cognitive bias human ai psychology module 8" href="https://dmeske.github.io/csit110-Cognitive-Bias-with-AI/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M4.2 7.5 12 3l7.8 4.5M4.2 16.5 12 21l7.8-4.5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" fill="#fff" stroke="currentColor" stroke-width="1.7"/></svg></span><span class="module">Module 08</span></div>
+        <h3>Cognitive Bias &amp; AI</h3><p>Explore how human assumptions and machine outputs can reinforce one another.</p>
+        <div class="card-bottom"><span class="tag">Critical thinking</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="critical" data-search="bias detective fairness algorithm data module 9" href="https://dmeske.github.io/csit110-ai-bias-detective/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m15.5 15.5 5 5M8 10.5h5m-2.5-2.5v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="module">Module 09</span></div>
+        <h3>AI Bias Detective</h3><p>Investigate how bias enters AI systems and what fairer outcomes can look like.</p>
+        <div class="card-bottom"><span class="tag">Critical thinking</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <a class="game-card" data-category="foundations" data-search="midterm jeopardy review quiz ai literacy" href="https://dmeske.github.io/csit110-midterm-jeopardy-game/" target="_blank" rel="noopener noreferrer">
+        <div class="card-top"><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5z" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h2m4 0h2M8 12h2m4 0h2m-8 4h2m4 0h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="module">Midterm Review</span></div>
+        <h3>AI Literacy Jeopardy</h3><p>Put your course knowledge to the test in a fast-paced, game-show-style review.</p>
+        <div class="card-bottom"><span class="tag">Knowledge check</span><span class="launch">Play now <span class="launch-arrow">↗</span></span></div>
+      </a>
+      <div class="empty" id="empty-state">No games match that search. Try another keyword or topic.</div>
+    </div>
+    <div class="note"><span><strong>Keep your curiosity switched on.</strong> These games are learning tools—not a substitute for checking sources, asking questions, and thinking for yourself.</span><span class="note-mark">Play thoughtfully / 2026</span></div>
+  </main>
+  <footer>
+    <div class="shell footer-inner"><div><div class="footer-title">AI Game Lab · Palomar College</div><div class="footer-copy">CSIT 110 · AI Literacy &amp; Skills · A collection for curious minds</div></div><a class="footer-link" href="https://www.palomar.edu/" target="_blank" rel="noopener noreferrer">Palomar College ↗</a></div>
+  </footer>
+  <script>
+    const buttons = [...document.querySelectorAll('.filter-btn')];
+    const cards = [...document.querySelectorAll('.game-card')];
+    const search = document.getElementById('search');
+    const empty = document.getElementById('empty-state');
+    let activeFilter = 'all';
+
+    function updateCards() {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach(card => {
+        const matchesFilter = activeFilter === 'all' || card.dataset.category === activeFilter;
+        const matchesSearch = !query || (card.dataset.search + ' ' + card.innerText).toLowerCase().includes(query);
+        const show = matchesFilter && matchesSearch;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      empty.style.display = visible ? 'none' : 'block';
+      document.getElementById('game-count').textContent = String(visible).padStart(2, '0');
+    }
+
+    buttons.forEach(button => button.addEventListener('click', () => {
+      activeFilter = button.dataset.filter;
+      buttons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      updateCards();
+    }));
+    search.addEventListener('input', updateCards);
+  </script>
+</body>
+</html>
